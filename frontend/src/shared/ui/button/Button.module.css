@@ -1,0 +1,36 @@
+.button {
+    padding: 9px 21px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.button:active {
+    transform: scale(0.97);
+}
+
+.primary {
+    background-color: #405C85;
+    color: #fff;
+}
+
+.primary:hover:not(.disabled) {
+    background-color: #364e72;
+}
+
+.secondary {
+    background-color: #e5e7eb; /* серый */
+    color: #111;
+}
+
+.secondary:hover:not(.disabled) {
+    background-color: #d1d5db;
+}
+
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

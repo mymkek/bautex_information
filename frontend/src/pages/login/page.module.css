@@ -1,0 +1,9 @@
+.page {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(126.41deg, #FEFEFF -0.84%, #E0E6F4 68.95%, #DFE2EB 98.42%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

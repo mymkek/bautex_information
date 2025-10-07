@@ -1,0 +1,9 @@
+.page {
+    font-family: 'CenturyGothic', sans-serif;
+}
+
+.container {
+    max-width: 1317px;
+    margin: 0 auto;
+    padding: 0 20px;
+}

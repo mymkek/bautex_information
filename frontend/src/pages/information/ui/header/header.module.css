@@ -1,0 +1,16 @@
+.box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 94px;
+    margin-bottom: 24px;
+}
+
+.h1 {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.logo {
+    max-width: 100%;
+}

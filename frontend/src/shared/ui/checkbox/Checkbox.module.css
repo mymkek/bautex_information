@@ -1,0 +1,53 @@
+.wrapper {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 13px;
+    user-select: none;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.input {
+    display: none;
+}
+
+/* сам квадрат чекбокса */
+.customCheckbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #757575;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    transition: background 0.2s ease, border 0.2s ease;
+}
+
+/* галочка */
+.input:checked + .customCheckbox {
+
+    border-color: #757575;
+}
+
+.input:checked + .customCheckbox::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 6px;
+    height: 10px;
+    border: solid #757575;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* подпись */
+.label {
+    color: #757575;
+}
+
+/* disabled */
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

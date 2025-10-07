@@ -1,0 +1,34 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input {
+    padding: 9px 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    line-height: 100%;
+    transition: border-color 0.2s ease;
+}
+
+.input:focus {
+    border-color: #007bff;
+}
+
+.error {
+    border-color: #d9534f;
+}
+
+.errorMessage {
+    font-size: 0.8rem;
+    color: #d9534f;
+}

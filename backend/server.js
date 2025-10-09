@@ -20,9 +20,9 @@ fastify.register(fastifyMultipart);
 fastify.register(fastifyMysql, {
     connectionString: `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`,
 })
-fastify.register(fastifyCors, {
-    origin: '*',
-    credentials: true // если используешь cookies
+await fastify.register(fastifyCors, {
+    origin: '*',      // разрешить любой источник
+    credentials: false // куки не используются
 });
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);

@@ -1,12 +1,23 @@
 .box {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 90px;
     padding-bottom: 100px;
 }
 
 .inputContainer {
     width: 100%;
+}
+
+.input {
+    width: 100%;
+    font-size: 24px;
+    border: 1px solid #B0BBCB;
+    border-radius: 6px;
+    outline: none;
+    padding: 6px 15px;
+    line-height: 100%;
 }
 
 .button {

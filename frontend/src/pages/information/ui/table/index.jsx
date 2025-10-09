@@ -85,6 +85,58 @@ export const Table = ({data}) => {
         window.location.reload();
     };
 
+    const getSubrowContent = (subrow) => {
+        const summary = {
+            LaufmeterPalette: subrow.reduce((acc, cur) => {
+                return acc + (Number(cur.LaufmeterPalette) / 1000)
+            }, 0),
+            PaletteKG: subrow.reduce((acc, cur) => {
+                return acc + (Number(cur["PaletteKG "]) / 1000)
+            }, 0),
+            Rollen: subrow.reduce((acc, cur) => {
+                return acc + Number(cur["Rollen"])
+            }, 0)
+        }
+        return (
+            <>
+                {subrow.map(row => (
+                    <>
+                        <tr>
+                            <td></td>
+                            <td className={classes.bold}>
+                                {(Number(row.LaufmeterPalette) / 1000).toFixed(3)}
+                            </td>
+                            <td className={classes.bold}>
+                                {(Number(row["PaletteKG "]) / 1000).toFixed(3)}
+                            </td>
+                            <td className={classes.bold}>{row["Palette "]}</td>
+                            <td>{row.detailed.length || '-'}</td>
+                            <td></td>
+                        </tr>
+                        {row?.detailed?.map((detailed) => (
+                            <tr>
+                                <td></td>
+                                <td>{detailed.LaufmeterRollen}</td>
+                                <td>{detailed.RollenKG}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{detailed.NumbRollen}</td>
+                            </tr>
+                        ))}
+                    </>
+                ))}
+                <tr className={`${classes.bold} ${classes.summary}`}>
+                    <td>Summe</td>
+                    <td>{summary.LaufmeterPalette.toFixed(3)}</td>
+                    <td>{summary.PaletteKG.toFixed(3)}</td>
+                    <td>{subrow.length}</td>
+                    <td>{summary.Rollen}</td>
+                    <td></td>
+                </tr>
+            </>
+        )
+    }
+
     return (
         <table className={classes.table}>
             <thead>
@@ -117,31 +169,22 @@ export const Table = ({data}) => {
                             }
                         </td>
                         <td className={classes.bold}>
-                            {calculateValue(dataObject[key], "LaufmeterPalette")}
+                            {selectedRow !== index ? calculateValue(dataObject[key], "LaufmeterPalette") : null}
                         </td>
                         <td className={classes.bold}>
-                            {calculateValue(dataObject[key], "PaletteKG ")}
+                            {selectedRow !== index ? calculateValue(dataObject[key], "PaletteKG "): null}
                         </td>
                         <td className={classes.bold}>
-                            {calculateValue(dataObject[key], "Rollen")}
+                            {selectedRow !== index ? calculateValue(dataObject[key], "Rollen"): null}
                         </td>
                         <td className={classes.bold}>
-                            {calculateValue(dataObject[key], "Palette ")}
+                            {selectedRow !== index ? calculateValue(dataObject[key], "Palette "): null}
                         </td>
                         <td>
 
                         </td>
                     </tr>
-                    {selectedRow === index && (
-                        <tr>
-                            <td>ПАВАо</td>
-                            <td>ПАВАо</td>
-                            <td>ПАВАо</td>
-                            <td>ПАВАо</td>
-                            <td>ПАВАо</td>
-                            <td>ПАВАо</td>
-                        </tr>
-                    )}
+                    {selectedRow === index && getSubrowContent(dataObject[key])}
                 </React.Fragment>
             ))}
             </tbody>

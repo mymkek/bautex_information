@@ -45,7 +45,7 @@ export const Form = () => {
                 Ausgang
             </button>
             <div className={classes.inputContainer}>
-                <Input placeholder="Kommentar" value={comment} onChange={handleChange} />
+                <input className={classes.input} placeholder="Kommentar" value={comment} onChange={handleChange} />
                 {error ? <div className={classes.error}>{error}</div> : null}
             </div>
             <button onClick={handleSubmitComment} className={classes.button}>Absenden</button>

@@ -10,6 +10,7 @@
     border: none;
     text-align: right;
     padding: 10px;
+    font-size: 20px;
 }
 .top > th {
     font-size: 24px;
@@ -21,6 +22,9 @@
 }
 .bold {
     font-weight: bold !important;
+}
+.summary td {
+    border-top: 1px solid #C1C7CF;
 }
 .row {
     background-color: #FFDC2D;

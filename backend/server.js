@@ -6,11 +6,19 @@ import fastifyMultipart from '@fastify/multipart';
 import fastifyCors from '@fastify/cors';
 import protectedRoutes from "./enpoints/get-data/index.js";
 
+const {
+    MYSQL_USER,
+    MYSQL_PASSWORD,
+    MYSQL_HOST,
+    MYSQL_PORT,
+    MYSQL_DATABASE
+} = process.env
+
 
 const fastify = new Fastify();
 fastify.register(fastifyMultipart);
 fastify.register(fastifyMysql, {
-    connectionString: 'mysql://user:userpassword@mysql:3306/mydb'
+    connectionString: `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`,
 })
 fastify.register(fastifyCors, {
     origin: '*',

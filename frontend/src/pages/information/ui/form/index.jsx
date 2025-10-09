@@ -22,10 +22,26 @@ export const Form = () => {
         setError("");
     }
     const handleSubmitComment = () => {
-        console.log('submitComment');
         if(!comment){
             setError("Dieses Feld ist erforderlich.")
         }
+        try {
+            const response = fetch(`${config.apiUrl}/comment`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+                body: JSON.stringify({comment})
+            }).then(res => res.json()).then((data) => {
+                if(Array.isArray(data.response)) {
+                    setData(data.response);
+                }
+            })
+        } catch (e) {
+            console.error('Error while submitting comment:', e);
+            setError('Beim Senden des Kommentars ist ein Fehler aufgetreten.');
+        }
+
     }
 
     return (

@@ -1,6 +1,19 @@
 // ./routes/protected-routes.js
 import axios from 'axios';
 import https from 'https';
+import dotenv from 'dotenv'
+import nodemailer from 'nodemailer'
+
+dotenv.config()
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false, // true для порта 465, false — для 587
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+})
 
 export default async function protectedRoutes(fastify, options) {
     fastify.get('/get-data', async (req, reply) => {
@@ -45,8 +58,30 @@ export default async function protectedRoutes(fastify, options) {
     });
 
     fastify.post('/comment', async (req, reply) => {
-        return reply.code(200).send({
-            fdsf: 'fdsfdsf'
-        })
+        const { comment } = req.body
+
+        if (!comment) {
+            return reply.code(400).send({ error: 'Comment is required' })
+        }
+
+        try {
+            await transporter.sendMail({
+                from: `"My App" <${process.env.SMTP_USER}>`,
+                to: process.env.MAIL_TO,
+                subject: 'New Comment Received',
+                text: `New comment:\n\n${comment}`,
+            })
+
+            return reply.code(200).send({
+                success: true,
+                message: 'Email sent successfully',
+            })
+        } catch (err) {
+            console.error('Email error:', err)
+            return reply.code(500).send({
+                success: false,
+                message: 'Failed to send email',
+            })
+        }
     })
 }

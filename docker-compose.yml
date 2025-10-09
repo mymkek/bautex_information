@@ -29,12 +29,12 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword   # пароль для root
-      MYSQL_DATABASE: mydb                # создаст базу по умолчанию
-      MYSQL_USER: user                    # дополнительный пользователь
-      MYSQL_PASSWORD: userpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"        # проброс порта на локальную машину
+      - "${MYSQL_PORT}:3306"
     volumes:
       - ./backend/data:/var/lib/mysql
 

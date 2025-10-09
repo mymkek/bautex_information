@@ -13,7 +13,7 @@ export const LoginForm = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    console.log(config.apiUrl)
     const navigate = useNavigate();
 
     const handleLogin = async () => {

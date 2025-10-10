@@ -14,6 +14,10 @@ export default function Information() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
+        document.title = "Information — BauTex Composites";
+    }, []);
+
+    useEffect(() => {
         const token = localStorage.getItem('accessToken');
         console.log(token)
         if (!token) {

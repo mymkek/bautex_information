@@ -21,11 +21,12 @@ fastify.register(fastifyMysql, {
     connectionString: `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`,
 })
 fastify.register(fastifyCors, {
-    origin: true,
+    origin: 'http://178.162.242.74', // фронт
     methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    allowedHeaders: ['Content-Type','Authorization'],
+    credentials: true
 });
+
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);
 

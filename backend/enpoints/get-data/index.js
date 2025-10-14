@@ -66,10 +66,10 @@ export default async function protectedRoutes(fastify, options) {
 
         try {
             await transporter.sendMail({
-                from: `"My App" <${process.env.SMTP_USER}>`,
+                from: process.env.SMTP_USER,
                 to: process.env.MAIL_TO,
                 subject: 'New Comment Received',
-                text: `New comment:\n\n${comment}`,
+                text: comment,
             })
 
             return reply.code(200).send({

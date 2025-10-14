@@ -1,6 +1,5 @@
 import React, {useMemo, useState} from "react";
 import classes from './table.module.css';
-import {Button} from "../../../../shared/ui/button/button.jsx";
 
 export const Table = ({data}) => {
 
@@ -65,7 +64,7 @@ export const Table = ({data}) => {
             return sum + parsed;
         }, 0);
 
-        return Number(sum).toLocaleString('de-DE')
+        return Number(sum)
     }
 
 
@@ -84,6 +83,25 @@ export const Table = ({data}) => {
     const reloadPage = () => {
         window.location.reload();
     };
+
+    const getTotalRollen = () => {
+        return Object.values(dataObject).reduce((acc, cur) => {
+            return acc += cur.reduce((rAcc, rCur) => rAcc + rCur.Rollen, 0);
+        }, 0);
+    }
+
+    const getTotalWeight = () => {
+        const total = Object.values(dataObject).reduce((acc, cur) => {
+            return acc += cur.reduce((rAcc, rCur) => {
+                if(!isNaN(Number(rCur['PaletteKG ']))) {
+                    return rAcc + Number(rCur['PaletteKG '])
+                }
+                return rAcc;
+            }, 0);
+        }, 0);
+
+        return (total / 1000).toFixed(3)
+    }
 
     const getSubrowContent = (subrow) => {
         const summary = {
@@ -109,18 +127,20 @@ export const Table = ({data}) => {
                             <td className={classes.bold}>
                                 {(Number(row["PaletteKG "]) / 1000).toFixed(3)}
                             </td>
+                            <td className={classes.bold}>{row.detailed.length || '-'}</td>
                             <td className={classes.bold}>{row["Palette "]}</td>
-                            <td>{row.detailed.length || '-'}</td>
+
                             <td></td>
                         </tr>
                         {row?.detailed?.map((detailed) => (
                             <tr>
                                 <td></td>
-                                <td>{detailed.LaufmeterRollen}</td>
-                                <td>{detailed.RollenKG}</td>
-                                <td></td>
-                                <td></td>
+                                <td>{detailed.LaufmeterRollen / 1000}</td>
+                                <td>{detailed.RollenKG / 1000}</td>
                                 <td>{detailed.NumbRollen}</td>
+                                <td></td>
+                                <td></td>
+
                             </tr>
                         ))}
                     </>
@@ -143,18 +163,21 @@ export const Table = ({data}) => {
             <tr className={classes.top}>
                 <th className={classes.bold}>Bestand</th>
                 <th><button onClick={reloadPage} className={classes.button}>Erneuern</button></th>
+
+                <th>Kg</th>
+                <th>Rollen</th>
                 <th>{getFormattedDate()}</th>
-                <th>Total:</th>
-                <th>Rollen <span className={classes.bold}>{dataProcessed.rollenTotal}</span></th>
-                <th>kg <span className={classes.bold}>{dataProcessed.kgTotal}</span></th>
+                <th style={{minWidth: 100}}></th>
             </tr>
             <tr className={classes.headers}>
-                <th>Palette</th>
-                <th>Rollen</th>
-                <th>Rolle, №</th>
                 <th>Breite, mm</th>
-                <th>kg</th>
                 <th>Laufmeter</th>
+                <th className={classes.bold}>{getTotalWeight()}</th>
+                <th className={classes.bold}>{getTotalRollen()}</th>
+                <th>Palette</th>
+
+                <th></th>
+
             </tr>
             </thead>
             <tbody>
@@ -172,7 +195,7 @@ export const Table = ({data}) => {
                             {selectedRow !== index ? calculateValue(dataObject[key], "LaufmeterPalette") : null}
                         </td>
                         <td className={classes.bold}>
-                            {selectedRow !== index ? calculateValue(dataObject[key], "PaletteKG "): null}
+                            {selectedRow !== index ? (calculateValue(dataObject[key], "PaletteKG ") / 1000).toFixed(3): null}
                         </td>
                         <td className={classes.bold}>
                             {selectedRow !== index ? calculateValue(dataObject[key], "Rollen"): null}

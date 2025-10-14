@@ -192,7 +192,7 @@ export const Table = ({data}) => {
                             }
                         </td>
                         <td className={classes.bold}>
-                            {selectedRow !== index ? calculateValue(dataObject[key], "LaufmeterPalette") : null}
+                            {selectedRow !== index ? calculateValue(dataObject[key], "LaufmeterPalette") / 1000 : null}
                         </td>
                         <td className={classes.bold}>
                             {selectedRow !== index ? (calculateValue(dataObject[key], "PaletteKG ") / 1000).toFixed(3): null}

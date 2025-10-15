@@ -37,7 +37,7 @@ export const Table = ({data}) => {
                 return acc + cur.Rollen
             }, 0),
             kgTotal: data.reduce((acc, cur) => {
-                if(!Number.isNaN(parseFloat(cur['PaletteKG ']))) {
+                if (!Number.isNaN(parseFloat(cur['PaletteKG ']))) {
                     return acc + parseFloat(cur['PaletteKG '])
                 }
                 return acc;
@@ -54,7 +54,7 @@ export const Table = ({data}) => {
         const month = String(now.getMonth() + 1).padStart(2, '0'); // месяц с ведущим нулём (0-11 +1)
         const year = now.getFullYear();
 
-        return  `${day}.${month}.${year}`;
+        return `${day}.${month}.${year}`;
     }
 
     const calculateValue = (data, value) => {
@@ -72,7 +72,7 @@ export const Table = ({data}) => {
     console.log(dataObject);
 
     const handleAccordion = (index) => {
-        if(selectedRow === index) {
+        if (selectedRow === index) {
             setSelectedRow(null)
         } else {
             setSelectedRow(index)
@@ -93,7 +93,7 @@ export const Table = ({data}) => {
     const getTotalWeight = () => {
         const total = Object.values(dataObject).reduce((acc, cur) => {
             return acc += cur.reduce((rAcc, rCur) => {
-                if(!isNaN(Number(rCur['PaletteKG ']))) {
+                if (!isNaN(Number(rCur['PaletteKG ']))) {
                     return rAcc + Number(rCur['PaletteKG '])
                 }
                 return rAcc;
@@ -103,18 +103,25 @@ export const Table = ({data}) => {
         return (total / 1000).toFixed(3)
     }
 
-    const getSubrowContent = (subrow) => {
-        const summary = {
+    const calculateSubrow = (subrow) => {
+        return  {
             LaufmeterPalette: subrow.reduce((acc, cur) => {
-                return acc + (Number(cur.LaufmeterPalette) / 1000)
-            }, 0),
+                return acc + cur.detailed.reduce((_acc, _cur) => {
+                    return _acc + (Number(_cur.LaufmeterRollen))
+                }, 0)
+            }, 0).toLocaleString('de-DE'),
             PaletteKG: subrow.reduce((acc, cur) => {
-                return acc + (Number(cur["PaletteKG "]) / 1000)
-            }, 0),
+                return acc + cur.detailed.reduce((_acc, _cur) => {
+                    return _acc + (Number(_cur.RollenKG))
+                }, 0)
+            }, 0).toLocaleString('de-DE'),
             Rollen: subrow.reduce((acc, cur) => {
                 return acc + Number(cur["Rollen"])
             }, 0)
         }
+    }
+    const getSubrowContent = (subrow) => {
+
         return (
             <>
                 {subrow.map(row => (
@@ -122,10 +129,12 @@ export const Table = ({data}) => {
                         <tr>
                             <td></td>
                             <td className={classes.bold}>
-                                {(Number(row.LaufmeterPalette) / 1000).toFixed(3)}
+                                {row?.detailed?.reduce((acc, cur) => {
+                                    return acc + (Number(cur.LaufmeterRollen))
+                                }, 0).toLocaleString('de-DE')}
                             </td>
                             <td className={classes.bold}>
-                                {(Number(row["PaletteKG "]) / 1000).toFixed(3)}
+                                {(Number(row["PaletteKG "])).toLocaleString('de-DE')}
                             </td>
                             <td className={classes.bold}>{row.detailed.length || '-'}</td>
                             <td className={classes.bold}>{row["Palette "]}</td>
@@ -135,8 +144,8 @@ export const Table = ({data}) => {
                         {row?.detailed?.map((detailed) => (
                             <tr>
                                 <td></td>
-                                <td>{detailed.LaufmeterRollen / 1000}</td>
-                                <td>{detailed.RollenKG / 1000}</td>
+                                <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
+                                <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
                                 <td>{detailed.NumbRollen}</td>
                                 <td></td>
                                 <td></td>
@@ -147,10 +156,11 @@ export const Table = ({data}) => {
                 ))}
                 <tr className={`${classes.bold} ${classes.summary}`}>
                     <td>Summe</td>
-                    <td>{summary.LaufmeterPalette.toFixed(3)}</td>
-                    <td>{summary.PaletteKG.toFixed(3)}</td>
+                    <td>{calculateSubrow(subrow).LaufmeterPalette}</td>
+                    <td>{calculateSubrow(subrow).PaletteKG}</td>
+                    <td>{calculateSubrow(subrow).Rollen}</td>
                     <td>{subrow.length}</td>
-                    <td>{summary.Rollen}</td>
+
                     <td></td>
                 </tr>
             </>
@@ -162,7 +172,9 @@ export const Table = ({data}) => {
             <thead>
             <tr className={classes.top}>
                 <th className={classes.bold}>Bestand</th>
-                <th><button onClick={reloadPage} className={classes.button}>Erneuern</button></th>
+                <th>
+                    <button onClick={reloadPage} className={classes.button}>Erneuern</button>
+                </th>
 
                 <th>Kg</th>
                 <th>Rollen</th>
@@ -181,35 +193,38 @@ export const Table = ({data}) => {
             </tr>
             </thead>
             <tbody>
-            {Object.keys(dataObject).map((key, index) => (
-                <React.Fragment key={index}>
-                    <tr className={classes.row} onClick={() => handleAccordion(index)}>
-                        <td className={classes.mainTitle}>
-                            {
-                                (key.includes("Gewebe") ? "Gewebe " : "") +
-                                Number(key.replace(/[^\d.,-]/g, "").replace(",", ".") * 1000)
-                                    .toLocaleString('de-DE') // форматирует с точкой как разделитель тысяч
-                            }
-                        </td>
-                        <td className={classes.bold}>
-                            {selectedRow !== index ? calculateValue(dataObject[key], "LaufmeterPalette") / 1000 : null}
-                        </td>
-                        <td className={classes.bold}>
-                            {selectedRow !== index ? (calculateValue(dataObject[key], "PaletteKG ") / 1000).toFixed(3): null}
-                        </td>
-                        <td className={classes.bold}>
-                            {selectedRow !== index ? calculateValue(dataObject[key], "Rollen"): null}
-                        </td>
-                        <td className={classes.bold}>
-                            {selectedRow !== index ? calculateValue(dataObject[key], "Palette "): null}
-                        </td>
-                        <td>
+            {Object.keys(dataObject).map((key, index) => {
 
-                        </td>
-                    </tr>
-                    {selectedRow === index && getSubrowContent(dataObject[key])}
-                </React.Fragment>
-            ))}
+                return (
+                    <React.Fragment key={index}>
+                        <tr className={classes.row} onClick={() => handleAccordion(index)}>
+                            <td className={classes.mainTitle}>
+                                {
+                                    (key.includes("Gewebe") ? "Gewebe " : "") +
+                                    Number(key.replace(/[^\d.,-]/g, "").replace(",", ".") * 1000)
+                                        .toLocaleString('de-DE')
+                                }
+                            </td>
+                            <td className={classes.bold}>
+                                {selectedRow !== index ? calculateSubrow(dataObject[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
+                            </td>
+                            <td className={classes.bold}>
+                                {selectedRow !== index ? calculateSubrow(dataObject[key]).PaletteKG.toLocaleString('de-DE') : null}
+                            </td>
+                            <td className={classes.bold}>
+                                {selectedRow !== index ? calculateValue(dataObject[key], "Rollen") : null}
+                            </td>
+                            <td className={classes.bold}>
+                                {selectedRow !== index ? dataObject[key].length : null}
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                        {selectedRow === index && getSubrowContent(dataObject[key])}
+                    </React.Fragment>
+                )
+            })}
             </tbody>
         </table>
     );

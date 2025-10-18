@@ -6,13 +6,11 @@ import nodemailer from 'nodemailer'
 
 dotenv.config()
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false, // true для порта 465, false — для 587
+    service: 'gmail',
     auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
+        pass: process.env.SMTP_PASS
+    }
 })
 
 export default async function protectedRoutes(fastify, options) {
@@ -66,22 +64,16 @@ export default async function protectedRoutes(fastify, options) {
 
         try {
             await transporter.sendMail({
-                from: process.env.SMTP_USER,
+                from: `"My App" <${process.env.SMTP_USER}>`,
                 to: process.env.MAIL_TO,
-                subject: 'New Comment Received',
-                text: comment,
+                subject: 'Новый комментарий BauTex',
+                text: comment
             })
 
-            return reply.code(200).send({
-                success: true,
-                message: 'Email sent successfully',
-            })
+            return reply.code(200).send({ success: true, message: 'Email sent successfully' })
         } catch (err) {
             console.error('Email error:', err)
-            return reply.code(500).send({
-                success: false,
-                message: 'Failed to send email',
-            })
+            return reply.code(500).send({ success: false, message: 'Failed to send email' })
         }
     })
 }

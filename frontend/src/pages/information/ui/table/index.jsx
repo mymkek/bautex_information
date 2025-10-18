@@ -3,8 +3,6 @@ import classes from './table.module.css';
 
 export const Table = ({data}) => {
 
-    console.log(data);
-
     const [selectedRow, setSelectedRow] = useState(null);
 
 
@@ -69,7 +67,7 @@ export const Table = ({data}) => {
 
 
     const dataObject = Object.fromEntries(dataProcessed.data);
-    console.log(dataObject);
+
 
     const handleAccordion = (index) => {
         if (selectedRow === index) {
@@ -90,18 +88,7 @@ export const Table = ({data}) => {
         }, 0);
     }
 
-    const getTotalWeight = () => {
-        const total = Object.values(dataObject).reduce((acc, cur) => {
-            return acc += cur.reduce((rAcc, rCur) => {
-                if (!isNaN(Number(rCur['PaletteKG ']))) {
-                    return rAcc + Number(rCur['PaletteKG '])
-                }
-                return rAcc;
-            }, 0);
-        }, 0);
 
-        return (total / 1000).toFixed(3)
-    }
 
     const calculateSubrow = (subrow) => {
         return  {
@@ -114,12 +101,23 @@ export const Table = ({data}) => {
                 return acc + cur.detailed.reduce((_acc, _cur) => {
                     return _acc + (Number(_cur.RollenKG))
                 }, 0)
-            }, 0).toLocaleString('de-DE'),
+            }, 0),
             Rollen: subrow.reduce((acc, cur) => {
                 return acc + Number(cur["Rollen"])
             }, 0)
         }
     }
+
+    const getTotalWeight = () => {
+
+        const total = Object.values(dataObject).reduce((acc, cur) => {
+            console.log(calculateSubrow(cur).PaletteKG)
+            return acc + calculateSubrow(cur).PaletteKG
+        }, 0);
+
+        return (total / 1000).toFixed(3)
+    }
+
     const getSubrowContent = (subrow) => {
 
         return (
@@ -127,6 +125,7 @@ export const Table = ({data}) => {
                 {subrow.map(row => (
                     <>
                         <tr>
+                            <td ></td>
                             <td></td>
                             <td className={classes.bold}>
                                 {row?.detailed?.reduce((acc, cur) => {
@@ -144,10 +143,11 @@ export const Table = ({data}) => {
                         {row?.detailed?.map((detailed) => (
                             <tr>
                                 <td></td>
+                                <td></td>
                                 <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
                                 <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
-                                <td>{detailed.NumbRollen}</td>
-                                <td></td>
+                                <td>{detailed.NumbRollen.toLocaleString('de-DE')}</td>
+
                                 <td></td>
 
                             </tr>
@@ -155,13 +155,16 @@ export const Table = ({data}) => {
                     </>
                 ))}
                 <tr className={`${classes.bold} ${classes.summary}`}>
+                    <td></td>
                     <td>Summe</td>
-                    <td>{calculateSubrow(subrow).LaufmeterPalette}</td>
-                    <td>{calculateSubrow(subrow).PaletteKG}</td>
-                    <td>{calculateSubrow(subrow).Rollen}</td>
+
+                    <td>{calculateSubrow(subrow).LaufmeterPalette.toLocaleString('de-DE')}</td>
+                    <td>{calculateSubrow(subrow).PaletteKG.toLocaleString('de-DE')}</td>
+                    <td>{calculateSubrow(subrow).Rollen.toLocaleString('de-DE')}</td>
                     <td>{subrow.length}</td>
 
                     <td></td>
+
                 </tr>
             </>
         )
@@ -171,6 +174,7 @@ export const Table = ({data}) => {
         <table className={classes.table}>
             <thead>
             <tr className={classes.top}>
+                <th style={{minWidth: 96, maxWidth: 96}}></th>
                 <th className={classes.bold}>Bestand</th>
                 <th>
                     <button onClick={reloadPage} className={classes.button}>Erneuern</button>
@@ -182,22 +186,22 @@ export const Table = ({data}) => {
                 <th style={{minWidth: 100}}></th>
             </tr>
             <tr className={classes.headers}>
+                <th style={{width: 96, maxWidth: 96}}></th>
                 <th>Breite, mm</th>
                 <th>Laufmeter</th>
                 <th className={classes.bold}>{getTotalWeight()}</th>
                 <th className={classes.bold}>{getTotalRollen()}</th>
                 <th>Palette</th>
-
                 <th></th>
-
             </tr>
             </thead>
             <tbody>
             {Object.keys(dataObject).map((key, index) => {
-
                 return (
                     <React.Fragment key={index}>
+
                         <tr className={classes.row} onClick={() => handleAccordion(index)}>
+                            <td style={{width: 96, maxWidth: 96}}></td>
                             <td className={classes.mainTitle}>
                                 {
                                     (key.includes("Gewebe") ? "Gewebe " : "") +

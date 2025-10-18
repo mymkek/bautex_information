@@ -125,7 +125,7 @@ export const Table = ({data}) => {
                 {subrow.map(row => (
                     <>
                         <tr>
-                            <td ></td>
+                            <td style={{minWidth: 96, maxWidth: 96}}></td>
                             <td></td>
                             <td className={classes.bold}>
                                 {row?.detailed?.reduce((acc, cur) => {
@@ -142,7 +142,7 @@ export const Table = ({data}) => {
                         </tr>
                         {row?.detailed?.map((detailed) => (
                             <tr>
-                                <td></td>
+                                <td  style={{minWidth: 96, maxWidth: 96}}></td>
                                 <td></td>
                                 <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
                                 <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
@@ -155,7 +155,7 @@ export const Table = ({data}) => {
                     </>
                 ))}
                 <tr className={`${classes.bold} ${classes.summary}`}>
-                    <td></td>
+                    <td  style={{minWidth: 96, maxWidth: 96}}></td>
                     <td>Summe</td>
 
                     <td>{calculateSubrow(subrow).LaufmeterPalette.toLocaleString('de-DE')}</td>

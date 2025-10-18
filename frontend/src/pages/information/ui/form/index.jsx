@@ -30,11 +30,12 @@ export const Form = () => {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({comment})
             }).then(res => res.json()).then((data) => {
                 if(Array.isArray(data.response)) {
-                    setData(data.response);
+
                 }
             })
         } catch (e) {

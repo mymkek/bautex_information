@@ -13,7 +13,7 @@ export const LoginForm = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    console.log(config.apiUrl)
+
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -41,8 +41,6 @@ export const LoginForm = () => {
 
             const data = await response.json();
 
-            // Предположим, что сервер возвращает { token: "..." }
-            console.log(data);
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
 

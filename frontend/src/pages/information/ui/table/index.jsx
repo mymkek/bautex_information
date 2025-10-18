@@ -111,7 +111,6 @@ export const Table = ({data}) => {
     const getTotalWeight = () => {
 
         const total = Object.values(dataObject).reduce((acc, cur) => {
-            console.log(calculateSubrow(cur).PaletteKG)
             return acc + calculateSubrow(cur).PaletteKG
         }, 0);
 

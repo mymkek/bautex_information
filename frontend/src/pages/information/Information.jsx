@@ -19,7 +19,7 @@ export default function Information() {
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
-        console.log(token)
+
         if (!token) {
             // если токена нет, редирект на главную
             navigate('/');

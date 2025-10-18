@@ -6,7 +6,7 @@ import 'dotenv/config';
 export default async function authRoutes(fastify, options) {
     fastify.post('/auth/register', (req, reply) => {
         const { username, password } = req.body;
-        console.log(username);
+
         if (!username || !password) {
             return reply.status(400).send({ error: 'Username и password обязательны' });
         }

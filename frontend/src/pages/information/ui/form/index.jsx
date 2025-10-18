@@ -34,9 +34,7 @@ export const Form = () => {
                 },
                 body: JSON.stringify({comment})
             }).then(res => res.json()).then((data) => {
-                if(Array.isArray(data.response)) {
-
-                }
+                setComment("");
             })
         } catch (e) {
             console.error('Error while submitting comment:', e);

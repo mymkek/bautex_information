@@ -5,9 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // позволяет подключаться не только с localhost
-    port: 5173, // dev-порт, можно оставить
+    host: true,
+    port: 5173,
     strictPort: true,
-    allowedHosts: ['information.bautex.pro', 'localhost'], // разрешённые хосты
+    allowedHosts: ['information.bautex.pro', 'localhost'],
   },
 })

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
 export default async function authRoutes(fastify, options) {
-    fastify.post('/api/auth/register', (req, reply) => {
+    fastify.post('/auth/register', (req, reply) => {
         const { username, password } = req.body;
 
         if (!username || !password) {
@@ -41,7 +41,7 @@ export default async function authRoutes(fastify, options) {
 
 
 
-    fastify.post('/api/auth/login', (req, reply) => {
+    fastify.post('/auth/login', (req, reply) => {
         const { username, password, rememberMe } = req.body;
 
         if (!username || !password) {
@@ -111,7 +111,7 @@ export default async function authRoutes(fastify, options) {
         });
     });
 
-    fastify.post('/api/auth/logout', async (req, res) => {
+    fastify.post('/auth/logout', async (req, res) => {
         try {
 
             return res.send({ message: 'Выход выполнен' });
@@ -124,7 +124,7 @@ export default async function authRoutes(fastify, options) {
 
 
 
-    fastify.get('/api/auth/me', (req, reply) => {
+    fastify.get('/auth/me', (req, reply) => {
         const authHeader = req.headers['authorization'];
         if (!authHeader) return reply.status(401).send({ error: 'Токен отсутствует' });
 
@@ -160,7 +160,7 @@ export default async function authRoutes(fastify, options) {
         });
     });
 
-    fastify.post('/api/auth/refresh', async (req, res) => {
+    fastify.post('/auth/refresh', async (req, res) => {
         // TODO: проверка refresh-token, выдача нового access-token
         res.send({token: null});
     });

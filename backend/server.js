@@ -49,7 +49,7 @@ fastify.addHook('onReady', async () => {
         process.exit(1);
     }
 });
-fastify.get('/api/user/:id', (req, reply) => {
+fastify.get('/user/:id', (req, reply) => {
     fastify.mysql.getConnection((err, client) => {
         if (err) return reply.send(err)
 

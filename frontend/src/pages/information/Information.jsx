@@ -21,7 +21,6 @@ export default function Information() {
         const token = localStorage.getItem('accessToken');
 
         if (!token) {
-            // если токена нет, редирект на главную
             navigate('/');
         }
     }, [navigate]);
@@ -47,7 +46,7 @@ export default function Information() {
     return (
         <div className={classes.page}>
             <div className={classes.container}>
-                <Header/>
+                {/*<Header/>*/}
                 {data?.length ? <Table data={data} /> : <Loader/>}
                 <Form/>
             </div>

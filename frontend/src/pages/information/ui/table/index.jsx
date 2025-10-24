@@ -1,5 +1,6 @@
 import React, {useMemo, useState} from "react";
 import classes from './table.module.css';
+import {Logo} from "../../../../shared/ui/logo/logo.jsx";
 
 export const Table = ({data}) => {
 
@@ -172,14 +173,27 @@ export const Table = ({data}) => {
     return (
         <table className={classes.table}>
             <thead>
+            <tr>
+
+                <th colSpan={2} >
+                    <h1 className={classes.h1}  style={{marginBottom: 20}}>
+                        Kanaltex 86
+                    </h1>
+                </th>
+                <th colSpan={4}>
+                    <div className={classes.logoContainer} style={{marginBottom: 20}}>
+                        <Logo width={557} className={classes.logo}/>
+                    </div>
+                </th>
+            </tr>
             <tr className={classes.top}>
                 <th style={{minWidth: 96, maxWidth: 96}}></th>
                 <th className={classes.bold}>Bestand</th>
                 <th>
-                    <button onClick={reloadPage} className={classes.button}>Erneuern</button>
+                    <button onClick={reloadPage} className={classes.button} style={{marginRight: -20}}>Erneuern</button>
                 </th>
 
-                <th>Kg</th>
+                <th>kg</th>
                 <th>Rollen</th>
                 <th>{getFormattedDate()}</th>
                 <th style={{minWidth: 100}}></th>

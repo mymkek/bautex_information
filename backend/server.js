@@ -20,15 +20,15 @@ fastify.register(fastifyMultipart);
 fastify.register(fastifyMysql, {
     connectionString: `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`,
 })
-fastify.register(fastifyCors, {
-    origin: 'http://178.162.242.74', // фронт
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type','Authorization'],
-    credentials: true
-});
+fastify.register(fastifyCors, { origin: true, credentials: true });
 
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);
+
+fastify.addHook('onRequest', (req, reply, done) => {
+    console.log(req.method, req.url);
+    done();
+});
 
 fastify.addHook('onReady', async () => {
     try {

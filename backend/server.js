@@ -26,7 +26,7 @@ fastify.register(authRoutes);
 fastify.register(protectedRoutes);
 
 fastify.addHook('onRequest', (req, reply, done) => {
-    console.log(req.method, req.url);
+    console.log("req income", req.method, req.url);
     done();
 });
 
@@ -49,7 +49,7 @@ fastify.addHook('onReady', async () => {
         process.exit(1);
     }
 });
-fastify.get('/user/:id', (req, reply) => {
+fastify.get('/api/user/:id', (req, reply) => {
     fastify.mysql.getConnection((err, client) => {
         if (err) return reply.send(err)
 

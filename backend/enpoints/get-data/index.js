@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 })
 
 export default async function protectedRoutes(fastify, options) {
-    fastify.get('/get-data', async (req, reply) => {
+    fastify.get('/api/get-data', async (req, reply) => {
         const url = 'https://mail.bautex.pro:37443/WMS/hs/Products/Update/';
         const auth = Buffer.from('БейВВ:654321').toString('base64');
 
@@ -55,7 +55,7 @@ export default async function protectedRoutes(fastify, options) {
         }
     });
 
-    fastify.post('/comment', async (req, reply) => {
+    fastify.post('/api/comment', async (req, reply) => {
         const { comment } = req.body
 
         if (!comment) {

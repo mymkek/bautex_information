@@ -45,8 +45,8 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-      - ./framy.ai.srt:/framy.ai.srt
-      - ./framy.ai.key:/framy.ai.key
+      - ./information.bautex.pro-fullchain.pem:/etc/ssl/certs/information.bautex.pro-fullchain.pem:ro
+      - ./information.bautex.pro-key.pem:/etc/ssl/private/information.bautex.pro-key.pem:ro
     depends_on:
       - frontend
       - backend

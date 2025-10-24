@@ -3,7 +3,7 @@
     border-collapse: separate; /* обязательно, чтобы работал border-spacing */
     border-spacing: 0 5px;    /* 0 по горизонтали, 10px по вертикали */
     margin-bottom: 60px;
-    margin-top: 60px;
+    margin-top: 25px;
 }
 
 .table th,

@@ -138,7 +138,7 @@ export const Table = ({data}) => {
                             <td className={classes.bold}>{row.detailed.length || '-'}</td>
                             <td className={classes.bold}>{row["Palette "]}</td>
 
-                            <td></td>
+                            <td className={classes.hiddenMobile}></td>
                         </tr>
                         {row?.detailed?.map((detailed) => (
                             <tr>
@@ -148,7 +148,7 @@ export const Table = ({data}) => {
                                 <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
                                 <td>{detailed.NumbRollen.toLocaleString('de-DE')}</td>
 
-                                <td></td>
+                                <td ></td>
 
                             </tr>
                         ))}
@@ -163,7 +163,7 @@ export const Table = ({data}) => {
                     <td>{calculateSubrow(subrow).Rollen.toLocaleString('de-DE')}</td>
                     <td>{subrow.length}</td>
 
-                    <td></td>
+                    <td className={classes.hiddenMobile}></td>
 
                 </tr>
             </>
@@ -171,21 +171,26 @@ export const Table = ({data}) => {
     }
 
     return (
-        <table className={classes.table}>
-            <thead>
-            <tr>
-
-                <th colSpan={2} >
-                    <h1 className={classes.h1}  style={{marginBottom: 20}}>
-                        Kanaltex 86
-                    </h1>
-                </th>
-                <th colSpan={4}>
-                    <div className={classes.logoContainer} style={{marginBottom: 20}}>
-                        <Logo width={557} className={classes.logo}/>
-                    </div>
-                </th>
-            </tr>
+        <>
+            <div className={classes.mobileHeader}>
+                <h1 className={classes.h1}>Kanaltex 86</h1>
+                <Logo width={200} className={classes.mobileLogo}/>
+            </div>
+            <div className={classes.mobileDate}>{getFormattedDate()}</div>
+            <table className={classes.table}>
+                <thead>
+                <tr className={`${classes.desktopHeader} ${classes.hiddenMobile}`}>
+                    <th colSpan={2} >
+                        <h1 className={classes.h1}  style={{marginBottom: 20}}>
+                            Kanaltex 86
+                        </h1>
+                    </th>
+                    <th colSpan={4}>
+                        <div className={`${classes.logoContainer} ${classes.hiddenMobile}`} style={{marginBottom: 20}}>
+                            <Logo width={557} className={classes.logo}/>
+                        </div>
+                    </th>
+                </tr>
             <tr className={classes.top}>
                 <th style={{minWidth: 96, maxWidth: 96}}></th>
                 <th className={classes.bold}>Bestand</th>
@@ -195,8 +200,8 @@ export const Table = ({data}) => {
 
                 <th>kg</th>
                 <th>Rollen</th>
-                <th>{getFormattedDate()}</th>
-                <th style={{minWidth: 100}}></th>
+                <th ><span className={classes.hiddenMobile}>{getFormattedDate()}</span></th>
+                <th className={classes.hiddenMobile} style={{minWidth: 100}}></th>
             </tr>
             <tr className={classes.headers}>
                 <th style={{width: 96, maxWidth: 96}}></th>
@@ -205,7 +210,7 @@ export const Table = ({data}) => {
                 <th className={classes.bold}>{getTotalWeight()}</th>
                 <th className={classes.bold}>{getTotalRollen()}</th>
                 <th>Palette</th>
-                <th></th>
+                <th className={classes.hiddenMobile}></th>
             </tr>
             </thead>
             <tbody>
@@ -234,7 +239,7 @@ export const Table = ({data}) => {
                             <td className={classes.bold}>
                                 {selectedRow !== index ? dataObject[key].length : null}
                             </td>
-                            <td>
+                            <td className={classes.hiddenMobile}>
 
                             </td>
                         </tr>
@@ -243,6 +248,7 @@ export const Table = ({data}) => {
                 )
             })}
             </tbody>
-        </table>
+            </table>
+        </>
     );
 }

@@ -45,7 +45,7 @@ export const Form = () => {
 
     return (
         <div className={classes.box}>
-            <button onClick={logout} className={classes.button}>
+            <button onClick={logout} className={`${classes.button} ${classes.logoutButton}`}>
                 <svg   viewBox="0 0 24 21"
                        width={30}
                        height={30}
@@ -59,12 +59,13 @@ export const Form = () => {
                 </svg>
                 Ausgang
             </button>
-            <div className={classes.inputContainer}>
-                <input className={classes.input} placeholder="Kommentar" value={comment} onChange={handleChange} />
-                {error ? <div className={classes.error}>{error}</div> : null}
+            <div className={classes.formRow}>
+                <div className={classes.inputContainer}>
+                    <input className={classes.input} placeholder="Kommentar" value={comment} onChange={handleChange} />
+                    {error ? <div className={classes.error}>{error}</div> : null}
+                </div>
+                <button onClick={handleSubmitComment} className={`${classes.button} ${classes.submitButton}`}>Absenden</button>
             </div>
-            <button onClick={handleSubmitComment} className={classes.button}>Absenden</button>
-
         </div>
     )
 }

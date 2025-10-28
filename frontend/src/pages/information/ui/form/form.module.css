@@ -6,6 +6,13 @@
     padding-bottom: 100px;
 }
 
+.formRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
 .inputContainer {
     width: 100%;
 }
@@ -30,6 +37,7 @@
     font-size: 24px;
     padding: 0 9px;
     cursor: pointer;
+    white-space: nowrap;
 }
 .button:hover {
     box-shadow: 4px 5px 6.5px 0px rgba(0, 0, 0, 0.08);
@@ -42,4 +50,56 @@
 
 .error {
     color: #a94442;
+}
+
+/* Мобильная версия (меньше 640px) */
+@media (max-width: 640px) {
+    .box {
+        flex-direction: column;
+        gap: 20px;
+
+        padding: 0 15px 50px 15px;
+    }
+
+    .formRow {
+        order: 1;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .logoutButton {
+        order: 2;
+        align-self: center;
+        font-size: 18px;
+        height: 36px;
+        padding: 0 12px;
+    }
+
+    .logoutButton svg {
+        min-width: 24px;
+        min-height: 24px;
+        margin-right: 6px;
+    }
+
+    .submitButton {
+        font-size: 16px;
+        height: 36px;
+        padding: 0 12px;
+        flex-shrink: 0;
+        line-height: 36px;
+    }
+
+    .input {
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+    .inputContainer {
+        flex-grow: 1;
+    }
+
+    .error {
+        font-size: 12px;
+        margin-top: 4px;
+    }
 }

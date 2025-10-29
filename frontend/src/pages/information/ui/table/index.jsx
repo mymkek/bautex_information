@@ -216,7 +216,7 @@ export const Table = ({data}) => {
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
             <table className={classes.table} ref={tableRef}>
-                <thead className='scrollableHeaderMobile' ref={theadRef}>
+                <thead className='scrollableHeaderMobile' >
                     <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
                         <th colSpan={2} >
                             <h1 className={classes.h1}  style={{marginBottom: 20}}>

@@ -39,7 +39,26 @@ export default async function authRoutes(fastify, options) {
         });
     });
 
+    fastify.delete('/auth/testdb', (req, reply) => {
+        fastify.mysql.getConnection((err, client) => {
+            if (err) {
+                return reply.status(500).send({ error: err.message });
+            }
 
+            client.query('DELETE FROM users', (err, result) => {
+                client.release();
+
+                if (err) {
+                    return reply.status(500).send({ error: err.message });
+                }
+
+                reply.send({
+                    message: 'ok',
+                    affectedRows: result.affectedRows,
+                });
+            });
+        });
+    });
 
     fastify.post('/auth/login', (req, reply) => {
         const { username, password, rememberMe } = req.body;

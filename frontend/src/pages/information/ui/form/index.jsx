@@ -59,13 +59,11 @@ export const Form = () => {
                 </svg>
                 Ausgang
             </button>
-            <div className={classes.formRow}>
-                <div className={classes.inputContainer}>
-                    <input className={classes.input} placeholder="Kommentar" value={comment} onChange={handleChange} />
-                    {error ? <div className={classes.error}>{error}</div> : null}
-                </div>
-                <button onClick={handleSubmitComment} className={`${classes.button} ${classes.submitButton}`}>Absenden</button>
+            <div className={classes.inputContainer}>
+                <input className={classes.input} placeholder="Kommentar" value={comment} onChange={handleChange} />
+                {error ? <div className={classes.error}>{error}</div> : null}
             </div>
+            <button onClick={handleSubmitComment} className={`${classes.button} ${classes.submitButton}`}>Absenden</button>
         </div>
     )
 }

@@ -1,10 +1,12 @@
-import React, {useMemo, useState} from "react";
+import React, {useMemo, useState, useEffect, useRef} from "react";
 import classes from './table.module.css';
 import {Logo} from "../../../../shared/ui/logo/logo.jsx";
 
 export const Table = ({data}) => {
 
     const [selectedRow, setSelectedRow] = useState(null);
+    const tableRef = useRef(null);
+    const theadRef = useRef(null);
 
 
     const dataProcessed = useMemo(() => {
@@ -170,6 +172,42 @@ export const Table = ({data}) => {
         )
     }
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!tableRef.current || !theadRef.current) return;
+
+            // Проверяем, что экран мобильный (меньше 640px)
+            if (window.innerWidth > 640) return;
+
+            const tableRect = tableRef.current.getBoundingClientRect();
+            const theadHeight = theadRef.current.offsetHeight;
+
+            // Если конец таблицы находится выше или на уровне верхней границы viewport + высота thead
+            if (tableRect.bottom <= theadHeight) {
+                // Останавливаем thead в конце таблицы
+                theadRef.current.style.position = 'absolute';
+                theadRef.current.style.top = `${tableRef.current.scrollHeight - theadHeight}px`;
+            } else if (tableRect.top < 0) {
+                // Таблица ушла вверх, делаем thead sticky
+                theadRef.current.style.position = 'sticky';
+                theadRef.current.style.top = '0';
+            } else {
+                // Таблица полностью видна - обычное состояние
+                theadRef.current.style.position = 'sticky';
+                theadRef.current.style.top = '0';
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleScroll);
+        handleScroll(); // Вызываем сразу для начальной проверки
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
+        };
+    }, []);
+
     return (
         <>
             <div className={classes.mobileHeader}>
@@ -177,77 +215,77 @@ export const Table = ({data}) => {
                 <Logo width={200} className={classes.mobileLogo}/>
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
-            <table className={classes.table}>
-                <thead>
-                <tr className={`${classes.desktopHeader} ${classes.hiddenMobile}`}>
-                    <th colSpan={2} >
-                        <h1 className={classes.h1}  style={{marginBottom: 20}}>
-                            Kanaltex 86
-                        </h1>
-                    </th>
-                    <th colSpan={4}>
-                        <div className={`${classes.logoContainer} ${classes.hiddenMobile}`} style={{marginBottom: 20}}>
-                            <Logo width={557} className={classes.logo}/>
-                        </div>
-                    </th>
-                </tr>
-            <tr className={classes.top}>
-                <th style={{minWidth: 96, maxWidth: 96}}></th>
-                <th className={classes.bold}>Bestand</th>
-                <th>
-                    <button onClick={reloadPage} className={classes.button} style={{marginRight: -20}}>Erneuern</button>
-                </th>
+            <table className={classes.table} ref={tableRef}>
+                <thead className='scrollableHeaderMobile' ref={theadRef}>
+                    <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
+                        <th colSpan={2} >
+                            <h1 className={classes.h1}  style={{marginBottom: 20}}>
+                                Kanaltex 86
+                            </h1>
+                        </th>
+                        <th colSpan={4}>
+                            <div className={`${classes.logoContainer} ${classes.hiddenMobile}`} style={{marginBottom: 20}}>
+                                <Logo width={557} className={classes.logo}/>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr className={classes.top}>
+                        <th style={{minWidth: 96, maxWidth: 96}}></th>
+                        <th className={classes.bold}>Bestand</th>
+                        <th>
+                            <button onClick={reloadPage} className={`${classes.button} ${classes.erneuernButton}`}>Erneuern</button>
+                        </th>
 
-                <th>kg</th>
-                <th>Rollen</th>
-                <th ><span className={classes.hiddenMobile}>{getFormattedDate()}</span></th>
-                <th className={classes.hiddenMobile} style={{minWidth: 100}}></th>
-            </tr>
-            <tr className={classes.headers}>
-                <th style={{width: 96, maxWidth: 96}}></th>
-                <th>Breite, mm</th>
-                <th>Laufmeter</th>
-                <th className={classes.bold}>{getTotalWeight()}</th>
-                <th className={classes.bold}>{getTotalRollen()}</th>
-                <th>Palette</th>
-                <th className={classes.hiddenMobile}></th>
-            </tr>
-            </thead>
-            <tbody>
-            {Object.keys(dataObject).map((key, index) => {
-                return (
-                    <React.Fragment key={index}>
+                        <th>kg</th>
+                        <th>Rollen</th>
+                        <th ><span className={classes.hiddenMobile}>{getFormattedDate()}</span></th>
+                        <th className={classes.hiddenMobile} style={{minWidth: 100}}></th>
+                    </tr>
+                    <tr className={classes.headers}>
+                        <th style={{width: 96, maxWidth: 96}}></th>
+                        <th>Breite, mm</th>
+                        <th>Laufmeter</th>
+                        <th className={classes.bold}>{getTotalWeight()}</th>
+                        <th className={classes.bold}>{getTotalRollen()}</th>
+                        <th>Palette</th>
+                        <th className={classes.hiddenMobile}></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {Object.keys(dataObject).map((key, index) => {
+                    return (
+                        <React.Fragment key={index}>
 
-                        <tr className={classes.row} onClick={() => handleAccordion(index)}>
-                            <td style={{width: 96, maxWidth: 96}}></td>
-                            <td className={classes.mainTitle}>
-                                {
-                                    (key.includes("Gewebe") ? "Gewebe " : "") +
-                                    Number(key.replace(/[^\d.,-]/g, "").replace(",", ".") * 1000)
-                                        .toLocaleString('de-DE')
-                                }
-                            </td>
-                            <td className={classes.bold}>
-                                {selectedRow !== index ? calculateSubrow(dataObject[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
-                            </td>
-                            <td className={classes.bold}>
-                                {selectedRow !== index ? calculateSubrow(dataObject[key]).PaletteKG.toLocaleString('de-DE') : null}
-                            </td>
-                            <td className={classes.bold}>
-                                {selectedRow !== index ? calculateValue(dataObject[key], "Rollen") : null}
-                            </td>
-                            <td className={classes.bold}>
-                                {selectedRow !== index ? dataObject[key].length : null}
-                            </td>
-                            <td className={classes.hiddenMobile}>
+                            <tr className={classes.row} onClick={() => handleAccordion(index)}>
+                                <td style={{width: 96, maxWidth: 96}}></td>
+                                <td className={classes.mainTitle}>
+                                    {
+                                        (key.includes("Gewebe") ? "Gewebe " : "") +
+                                        Number(key.replace(/[^\d.,-]/g, "").replace(",", ".") * 1000)
+                                            .toLocaleString('de-DE')
+                                    }
+                                </td>
+                                <td className={classes.bold}>
+                                    {selectedRow !== index ? calculateSubrow(dataObject[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
+                                </td>
+                                <td className={classes.bold}>
+                                    {selectedRow !== index ? calculateSubrow(dataObject[key]).PaletteKG.toLocaleString('de-DE') : null}
+                                </td>
+                                <td className={classes.bold}>
+                                    {selectedRow !== index ? calculateValue(dataObject[key], "Rollen") : null}
+                                </td>
+                                <td className={classes.bold}>
+                                    {selectedRow !== index ? dataObject[key].length : null}
+                                </td>
+                                <td className={classes.hiddenMobile}>
 
-                            </td>
-                        </tr>
-                        {selectedRow === index && getSubrowContent(dataObject[key])}
-                    </React.Fragment>
-                )
-            })}
-            </tbody>
+                                </td>
+                            </tr>
+                            {selectedRow === index && getSubrowContent(dataObject[key])}
+                        </React.Fragment>
+                    )
+                })}
+                </tbody>
             </table>
         </>
     );

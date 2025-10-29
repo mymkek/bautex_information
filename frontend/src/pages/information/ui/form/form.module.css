@@ -72,6 +72,7 @@
         align-self: center;
         font-size: 18px;
         height: 36px;
+        line-height: 36px;
         padding: 0 12px;
     }
 
@@ -84,7 +85,10 @@
     .submitButton {
         font-size: 16px;
         height: 36px;
-        padding: 0 12px;
+        padding: 0 32px;
+        background: #262370;
+        color: #fff;
+        margin-bottom: 30px;
         flex-shrink: 0;
         line-height: 36px;
     }

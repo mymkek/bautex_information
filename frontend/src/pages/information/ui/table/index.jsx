@@ -176,8 +176,6 @@ export const Table = ({data}) => {
         const handleScroll = () => {
             if (!tableRef.current || !theadRef.current) return;
 
-            // Проверяем, что экран мобильный (меньше 640px)
-            if (window.innerWidth > 640) return;
 
             const tableRect = tableRef.current.getBoundingClientRect();
             const theadHeight = theadRef.current.offsetHeight;
@@ -211,24 +209,27 @@ export const Table = ({data}) => {
     return (
         <>
             <div className={classes.mobileHeader}>
-                <h1 className={classes.h1}>Kanaltex 86</h1>
+                <h1 className={classes.mobileh1}>Kanaltex 86</h1>
                 <Logo width={200} className={classes.mobileLogo}/>
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
             <table className={classes.table} ref={tableRef}>
-                <thead className='scrollableHeaderMobile' >
-                    <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
-                        <th colSpan={2} >
-                            <h1 className={classes.h1}  style={{marginBottom: 20}}>
-                                Kanaltex 86
-                            </h1>
-                        </th>
-                        <th colSpan={4}>
-                            <div className={`${classes.logoContainer} ${classes.hiddenMobile}`} style={{marginBottom: 20}}>
-                                <Logo width={557} className={classes.logo}/>
-                            </div>
-                        </th>
-                    </tr>
+                <thead>
+                <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
+                    <th colSpan={2} >
+                        <h1 className={classes.h1}  style={{marginBottom: 20}}>
+                            Kanaltex 86
+                        </h1>
+                    </th>
+                    <th colSpan={4}>
+                        <div className={`${classes.logoContainer} ${classes.hiddenMobile}`} style={{marginBottom: 20}}>
+                            <Logo width={557} className={classes.logo}/>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <thead className={classes.thead} ref={theadRef}>
+
                     <tr className={classes.top}>
                         <th style={{minWidth: 96, maxWidth: 96}}></th>
                         <th className={classes.bold}>Bestand</th>

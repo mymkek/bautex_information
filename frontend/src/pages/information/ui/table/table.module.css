@@ -85,6 +85,18 @@
 .desktopHeader {
     display: table-row;
 }
+.thead {
+    position: relative;
+    z-index: 0;
+}
+
+.thead::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    z-index: -1;
+}
 
 /* Мобильная версия (меньше 640px) */
 @media (max-width: 640px) {
@@ -105,19 +117,21 @@
     .mobileHeader {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
+        flex-wrap: wrap;
         padding: 20px 15px;
         gap: 15px;
     }
 
-    .mobileHeader .h1 {
-        font-size: 24px;
+    .mobileh1 {
+        font-size: 22px;
         margin: 0;
         flex-shrink: 0;
     }
 
     .mobileLogo {
-        max-width: 150px;
+        max-width: 350px;
+        width: 100%;
         height: auto;
         flex-shrink: 1;
     }

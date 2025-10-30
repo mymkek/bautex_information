@@ -260,7 +260,6 @@ export const Table = ({data}) => {
                 </tr>
                 </thead>
                 <thead className={classes.thead} ref={theadRef}>
-
                     <tr className={classes.top}>
                         <th className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></th>
                         <th className={classes.bold}>Bestand</th>

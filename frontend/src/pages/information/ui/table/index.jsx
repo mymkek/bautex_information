@@ -7,6 +7,8 @@ export const Table = ({data}) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const tableRef = useRef(null);
     const theadRef = useRef(null);
+    const activeRowRef = useRef(null);
+    const summaryRowRef = useRef(null);
 
 
     const dataProcessed = useMemo(() => {
@@ -156,7 +158,7 @@ export const Table = ({data}) => {
                         ))}
                     </>
                 ))}
-                <tr className={`${classes.bold} ${classes.summary}`}>
+                <tr className={`${classes.bold} ${classes.summary}`} ref={summaryRowRef}>
                     <td  style={{minWidth: 96, maxWidth: 96}}></td>
                     <td>Summe</td>
 
@@ -194,6 +196,35 @@ export const Table = ({data}) => {
                 theadRef.current.style.position = 'sticky';
                 theadRef.current.style.top = '0';
             }
+
+            // Обработка sticky для активной строки аккордиона
+            if (activeRowRef.current && selectedRow !== null) {
+                const rowRect = activeRowRef.current.getBoundingClientRect();
+                const stickyTop = theadHeight;
+                const rowHeight = activeRowRef.current.offsetHeight;
+
+                // Проверяем позицию строки Summe, если она существует
+                let shouldStopSticky = false;
+                if (summaryRowRef.current) {
+                    const summaryRect = summaryRowRef.current.getBoundingClientRect();
+                    // Если строка Summe достигла позиции где должна быть sticky строка
+                    if (summaryRect.top <= stickyTop + rowHeight) {
+                        shouldStopSticky = true;
+                    }
+                }
+
+                // Если строка поднялась выше thead, делаем её sticky
+                if (!shouldStopSticky && rowRect.top <= stickyTop && tableRect.bottom > stickyTop) {
+                    activeRowRef.current.style.position = 'sticky';
+                    activeRowRef.current.style.top = `${stickyTop}px`;
+                    activeRowRef.current.style.zIndex = '5';
+                } else {
+                    // Иначе возвращаем обычное позиционирование
+                    activeRowRef.current.style.position = '';
+                    activeRowRef.current.style.top = '';
+                    activeRowRef.current.style.zIndex = '';
+                }
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -204,7 +235,7 @@ export const Table = ({data}) => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleScroll);
         };
-    }, []);
+    }, [selectedRow]);
 
     return (
         <>
@@ -231,7 +262,7 @@ export const Table = ({data}) => {
                 <thead className={classes.thead} ref={theadRef}>
 
                     <tr className={classes.top}>
-                        <th style={{minWidth: 96, maxWidth: 96}}></th>
+                        <th className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></th>
                         <th className={classes.bold}>Bestand</th>
                         <th>
                             <button onClick={reloadPage} className={`${classes.button} ${classes.erneuernButton}`}>Erneuern</button>
@@ -243,7 +274,7 @@ export const Table = ({data}) => {
                         <th className={classes.hiddenMobile} style={{minWidth: 100}}></th>
                     </tr>
                     <tr className={classes.headers}>
-                        <th style={{width: 96, maxWidth: 96}}></th>
+                        <th className={classes.hiddenMobile} style={{width: 96, maxWidth: 96}}></th>
                         <th>Breite, mm</th>
                         <th>Laufmeter</th>
                         <th className={classes.bold}>{getTotalWeight()}</th>
@@ -257,8 +288,12 @@ export const Table = ({data}) => {
                     return (
                         <React.Fragment key={index}>
 
-                            <tr className={classes.row} onClick={() => handleAccordion(index)}>
-                                <td style={{width: 96, maxWidth: 96}}></td>
+                            <tr
+                                className={classes.row}
+                                onClick={() => handleAccordion(index)}
+                                ref={selectedRow === index ? activeRowRef : null}
+                            >
+
                                 <td className={classes.mainTitle}>
                                     {
                                         (key.includes("Gewebe") ? "Gewebe " : "") +

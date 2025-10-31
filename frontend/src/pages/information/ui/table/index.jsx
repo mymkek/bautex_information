@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect, useRef} from "react";
+import React, {useMemo, useState} from "react";
 import classes from './table.module.css';
 import {Logo} from "../../../../shared/ui/logo/logo.jsx";
 import {getFormattedDate} from "./utils.js";
@@ -61,11 +61,9 @@ export const Table = ({data}) => {
 
     const getTotalRollen = () => {
         return Object.values(dataProcessed).reduce((acc, cur) => {
-            return acc += cur.reduce((rAcc, rCur) => rAcc + rCur.Rollen, 0);
+            return acc + cur.reduce((rAcc, rCur) => rAcc + rCur.Rollen, 0);
         }, 0);
     }
-
-
 
     const calculateSubrow = (subrow) => {
         return  {
@@ -94,56 +92,53 @@ export const Table = ({data}) => {
         return (total / 1000).toFixed(3)
     }
 
-    const getSubrowContent = (subrow) => {
+    const getSubrowContent = (subrow) => (
+        <>
+            {subrow.map(row => (
+                <>
+                    <tr>
+                        <td style={{minWidth: 96, maxWidth: 96}}></td>
+                        <td></td>
+                        <td className={classes.bold}>
+                            {row?.detailed?.reduce((acc, cur) => {
+                                return acc + (Number(cur.LaufmeterRollen))
+                            }, 0).toLocaleString('de-DE')}
+                        </td>
+                        <td className={classes.bold}>
+                            {(Number(row["PaletteKG "])).toLocaleString('de-DE')}
+                        </td>
+                        <td className={classes.bold}>{row.detailed.length || '-'}</td>
+                        <td className={classes.bold}>{row["Palette "]}</td>
 
-        return (
-            <>
-                {subrow.map(row => (
-                    <>
+                        <td className={classes.hiddenMobile}></td>
+                    </tr>
+                    {row?.detailed?.map((detailed) => (
                         <tr>
-                            <td style={{minWidth: 96, maxWidth: 96}}></td>
+                            <td  style={{minWidth: 96, maxWidth: 96}}></td>
                             <td></td>
-                            <td className={classes.bold}>
-                                {row?.detailed?.reduce((acc, cur) => {
-                                    return acc + (Number(cur.LaufmeterRollen))
-                                }, 0).toLocaleString('de-DE')}
-                            </td>
-                            <td className={classes.bold}>
-                                {(Number(row["PaletteKG "])).toLocaleString('de-DE')}
-                            </td>
-                            <td className={classes.bold}>{row.detailed.length || '-'}</td>
-                            <td className={classes.bold}>{row["Palette "]}</td>
+                            <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
+                            <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
+                            <td>{detailed.NumbRollen.toLocaleString('de-DE')}</td>
 
-                            <td className={classes.hiddenMobile}></td>
+                            <td ></td>
+
                         </tr>
-                        {row?.detailed?.map((detailed) => (
-                            <tr>
-                                <td  style={{minWidth: 96, maxWidth: 96}}></td>
-                                <td></td>
-                                <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
-                                <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
-                                <td>{detailed.NumbRollen.toLocaleString('de-DE')}</td>
+                    ))}
+                </>
+            ))}
+            <tr className={`${classes.bold} ${classes.summary}`}>
+                <td  style={{minWidth: 96, maxWidth: 96}}></td>
+                <td>Summe</td>
 
-                                <td ></td>
+                <td>{calculateSubrow(subrow).LaufmeterPalette.toLocaleString('de-DE')}</td>
+                <td>{calculateSubrow(subrow).PaletteKG.toLocaleString('de-DE')}</td>
+                <td>{calculateSubrow(subrow).Rollen.toLocaleString('de-DE')}</td>
+                <td>{subrow.length}</td>
 
-                            </tr>
-                        ))}
-                    </>
-                ))}
-                <tr className={`${classes.bold} ${classes.summary}`}>
-                    <td  style={{minWidth: 96, maxWidth: 96}}></td>
-                    <td>Summe</td>
-
-                    <td>{calculateSubrow(subrow).LaufmeterPalette.toLocaleString('de-DE')}</td>
-                    <td>{calculateSubrow(subrow).PaletteKG.toLocaleString('de-DE')}</td>
-                    <td>{calculateSubrow(subrow).Rollen.toLocaleString('de-DE')}</td>
-                    <td>{subrow.length}</td>
-
-                    <td className={classes.hiddenMobile}></td>
-                </tr>
-            </>
-        )
-    }
+                <td className={classes.hiddenMobile}></td>
+            </tr>
+        </>
+    )
 
 
 

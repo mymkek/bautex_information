@@ -35,13 +35,6 @@
     position: relative;
 }
 
-.row::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #FFDC2D;
-    z-index: -1;
-}
 .mainTitle {
     font-weight: bold;
     color: #8D2411;
@@ -114,14 +107,6 @@
     .hiddenMobile {
         display: none !important;
     }
-    /*
-    Дизайн-токены для паддингов (система иерархии):
-    - spacing-xs: 2px - минимальный
-    - spacing-sm: 4px - малый
-    - spacing-md: 6px - средний
-    - spacing-lg: 8px - большой
-    - spacing-xl: 10px - очень большой
-    */
 
     /* Показываем мобильный хедер с flexbox */
     .mobileHeader {
@@ -241,14 +226,6 @@
         position: relative;
     }
 
-    .row::before {
-        content: "";
-        position: absolute;
-        display: none;
-        inset: 0;
-        background: #FFDC2D;
-        z-index: -1;
-    }
 
     .row td {
         padding: 6px 4px;

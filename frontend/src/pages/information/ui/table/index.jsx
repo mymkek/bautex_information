@@ -1,6 +1,7 @@
 import React, {useMemo, useState, useEffect, useRef} from "react";
 import classes from './table.module.css';
 import {Logo} from "../../../../shared/ui/logo/logo.jsx";
+import {getFormattedDate} from "./utils.js";
 
 export const Table = ({data}) => {
 
@@ -31,30 +32,8 @@ export const Table = ({data}) => {
             return acc;
         }, new Map());
 
-        return {
-            rollenTotal: data.reduce((acc, cur) => {
-                return acc + cur.Rollen
-            }, 0),
-            kgTotal: data.reduce((acc, cur) => {
-                if (!Number.isNaN(parseFloat(cur['PaletteKG ']))) {
-                    return acc + parseFloat(cur['PaletteKG '])
-                }
-                return acc;
-            }, 0),
-            data: groupedData
-        }
+        return Object.fromEntries(groupedData)
     }, [data]);
-
-
-    const getFormattedDate = () => {
-        const now = new Date();
-
-        const day = String(now.getDate()).padStart(2, '0');      // день с ведущим нулём
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // месяц с ведущим нулём (0-11 +1)
-        const year = now.getFullYear();
-
-        return `${day}.${month}.${year}`;
-    }
 
     const calculateValue = (data, value) => {
         const sum = data.reduce((sum, item) => {
@@ -65,9 +44,6 @@ export const Table = ({data}) => {
 
         return Number(sum)
     }
-
-
-    const dataObject = Object.fromEntries(dataProcessed.data);
 
 
     const handleAccordion = (index) => {
@@ -84,7 +60,7 @@ export const Table = ({data}) => {
     };
 
     const getTotalRollen = () => {
-        return Object.values(dataObject).reduce((acc, cur) => {
+        return Object.values(dataProcessed).reduce((acc, cur) => {
             return acc += cur.reduce((rAcc, rCur) => rAcc + rCur.Rollen, 0);
         }, 0);
     }
@@ -111,7 +87,7 @@ export const Table = ({data}) => {
 
     const getTotalWeight = () => {
 
-        const total = Object.values(dataObject).reduce((acc, cur) => {
+        const total = Object.values(dataProcessed).reduce((acc, cur) => {
             return acc + calculateSubrow(cur).PaletteKG
         }, 0);
 
@@ -164,17 +140,17 @@ export const Table = ({data}) => {
                     <td>{subrow.length}</td>
 
                     <td className={classes.hiddenMobile}></td>
-
                 </tr>
             </>
         )
     }
 
 
+
     return (
         <>
             <div className={classes.mobileHeader}>
-                <h1 className={classes.h1}>Kanaltex 86</h1>
+                <h1 className={classes.mobileh1}>Kanaltex 86</h1>
                 <Logo width={200} className={classes.mobileLogo}/>
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
@@ -193,7 +169,7 @@ export const Table = ({data}) => {
                         </th>
                     </tr>
                     <tr className={classes.top}>
-                        <th style={{minWidth: 96, maxWidth: 96}}></th>
+                        <th className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></th>
                         <th className={classes.bold}>Bestand</th>
                         <th>
                             <button onClick={reloadPage} className={`${classes.button} ${classes.erneuernButton}`}>Erneuern</button>
@@ -205,7 +181,7 @@ export const Table = ({data}) => {
                         <th className={classes.hiddenMobile} style={{minWidth: 100}}></th>
                     </tr>
                     <tr className={classes.headers}>
-                        <th style={{width: 96, maxWidth: 96}}></th>
+                        <th className={classes.hiddenMobile} style={{width: 96, maxWidth: 96}}></th>
                         <th>Breite, mm</th>
                         <th>Laufmeter</th>
                         <th className={classes.bold}>{getTotalWeight()}</th>
@@ -215,12 +191,11 @@ export const Table = ({data}) => {
                     </tr>
                 </thead>
                 <tbody>
-                {Object.keys(dataObject).map((key, index) => {
+                {Object.keys(dataProcessed).map((key, index) => {
                     return (
                         <React.Fragment key={index}>
-
                             <tr className={classes.row} onClick={() => handleAccordion(index)}>
-                                <td style={{width: 96, maxWidth: 96}}></td>
+                                <td className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                                 <td className={classes.mainTitle}>
                                     {
                                         (key.includes("Gewebe") ? "Gewebe " : "") +
@@ -229,22 +204,22 @@ export const Table = ({data}) => {
                                     }
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? calculateSubrow(dataObject[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
+                                    {selectedRow !== index ? calculateSubrow(dataProcessed[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? calculateSubrow(dataObject[key]).PaletteKG.toLocaleString('de-DE') : null}
+                                    {selectedRow !== index ? calculateSubrow(dataProcessed[key]).PaletteKG.toLocaleString('de-DE') : null}
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? calculateValue(dataObject[key], "Rollen") : null}
+                                    {selectedRow !== index ? calculateValue(dataProcessed[key], "Rollen") : null}
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? dataObject[key].length : null}
+                                    {selectedRow !== index ? dataProcessed[key].length : null}
                                 </td>
                                 <td className={classes.hiddenMobile}>
 
                                 </td>
                             </tr>
-                            {selectedRow === index && getSubrowContent(dataObject[key])}
+                            {selectedRow === index && getSubrowContent(dataProcessed[key])}
                         </React.Fragment>
                     )
                 })}

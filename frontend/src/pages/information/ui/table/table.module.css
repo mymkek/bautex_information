@@ -160,55 +160,45 @@
         display: none;
     }
 
-    /* Адаптация таблицы */
+    /*!* Адаптация таблицы *!*/
+    /*.table {*/
+    /*    margin-top: 0;*/
+    /*    margin-bottom: 40px;*/
+    /*    border-spacing: 0 3px;*/
+    /*    width: 100%;*/
+    /*    display: block;*/
+    /*    overflow-x: auto;*/
+    /*    position: relative;*/
+    /*}*/
+
+    /*.table thead,*/
+    /*.table tbody,*/
+    /*.table tr {*/
+    /*    display: table;*/
+    /*    width: 100%;*/
+    /*    table-layout: fixed;*/
+    /*}*/
+
+    /*.table thead {*/
+    /*    width: 100%;*/
+    /*    z-index: 15;*/
+    /*    background: white;*/
+    /*}*/
+
+    /*.table thead.scrollableHeaderMobile {*/
+    /*    position: sticky;*/
+    /*    top: 0;*/
+    /*}*/
+
+
+
+    /*.table tbody {*/
+    /*    width: 100%;*/
+    /*}*/
     .table {
+        border-spacing: 0 1px;
         margin-top: 0;
-        margin-bottom: 40px;
-        border-spacing: 0 3px;
-        width: 100%;
-        display: block;
-        overflow-x: auto;
-        position: relative;
     }
-
-    .table thead,
-    .table tbody,
-    .table tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-    .table thead {
-        width: 100%;
-        z-index: 15;
-        background: white;
-    }
-
-    .table thead.scrollableHeaderMobile {
-        position: sticky;
-        top: 0;
-    }
-
-    /* Sticky для каждой строки заголовка на мобильных */
-    .table :global(.scrollableHeaderMobile) .top th {
-        position: sticky;
-        top: 0;
-        background: white;
-        z-index: 15;
-    }
-
-    .table :global(.scrollableHeaderMobile) .headers th {
-        position: sticky;
-        top: 40px; /* Высота строки .top на мобильных */
-        background: white;
-        z-index: 15;
-    }
-
-    .table tbody {
-        width: 100%;
-    }
-
     /* Базовые ячейки - spacing-sm (вертикаль) + spacing-sm (горизонталь) */
     .table th,
     .table td {
@@ -221,7 +211,10 @@
         line-height: 1.2;
     }
 
-
+    .table :global(.scrollableHeaderMobile) tr.headers th {
+        top: 30px;
+        padding-bottom: 10px;
+    }
 
     /* Sticky заголовки с выравниванием по гриду */
     /* Строка .top - spacing-md (важный заголовок) */

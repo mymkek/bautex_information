@@ -5,8 +5,6 @@ import {Logo} from "../../../../shared/ui/logo/logo.jsx";
 export const Table = ({data}) => {
 
     const [selectedRow, setSelectedRow] = useState(null);
-    const tableRef = useRef(null);
-    const theadRef = useRef(null);
 
 
     const dataProcessed = useMemo(() => {
@@ -172,41 +170,6 @@ export const Table = ({data}) => {
         )
     }
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!tableRef.current || !theadRef.current) return;
-
-            // Проверяем, что экран мобильный (меньше 640px)
-            if (window.innerWidth > 640) return;
-
-            const tableRect = tableRef.current.getBoundingClientRect();
-            const theadHeight = theadRef.current.offsetHeight;
-
-            // Если конец таблицы находится выше или на уровне верхней границы viewport + высота thead
-            if (tableRect.bottom <= theadHeight) {
-                // Останавливаем thead в конце таблицы
-                theadRef.current.style.position = 'absolute';
-                theadRef.current.style.top = `${tableRef.current.scrollHeight - theadHeight}px`;
-            } else if (tableRect.top < 0) {
-                // Таблица ушла вверх, делаем thead sticky
-                theadRef.current.style.position = 'sticky';
-                theadRef.current.style.top = '0';
-            } else {
-                // Таблица полностью видна - обычное состояние
-                theadRef.current.style.position = 'sticky';
-                theadRef.current.style.top = '0';
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('resize', handleScroll);
-        handleScroll(); // Вызываем сразу для начальной проверки
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleScroll);
-        };
-    }, []);
 
     return (
         <>
@@ -215,7 +178,7 @@ export const Table = ({data}) => {
                 <Logo width={200} className={classes.mobileLogo}/>
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
-            <table className={classes.table} ref={tableRef}>
+            <table className={classes.table}>
                 <thead className='scrollableHeaderMobile' >
                     <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
                         <th colSpan={2} >

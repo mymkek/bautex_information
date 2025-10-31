@@ -150,7 +150,7 @@ export const Table = ({data}) => {
             </div>
             <div className={classes.mobileDate}>{getFormattedDate()}</div>
             <table className={classes.table}>
-                <thead className='scrollableHeaderMobile' >
+                <thead>
                     <tr className={`${classes.hiddenMobile} ${classes.desktopHeader} `}>
                         <th colSpan={2} >
                             <h1 className={classes.h1}  style={{marginBottom: 20}}>
@@ -163,6 +163,9 @@ export const Table = ({data}) => {
                             </div>
                         </th>
                     </tr>
+                </thead>
+                <thead className='scrollableHeaderMobile' >
+
                     <tr className={classes.top}>
                         <th className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></th>
                         <th className={classes.bold}>Bestand</th>

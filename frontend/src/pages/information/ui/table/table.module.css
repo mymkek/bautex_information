@@ -93,6 +93,21 @@
     background: #fff;
 }
 
+/* Sticky header для всех экранов */
+.table :global(.scrollableHeaderMobile) tr.top th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.table :global(.scrollableHeaderMobile) tr.headers th {
+    position: sticky;
+    top: 50px; /* Высота первой строки .top */
+    background: white;
+    z-index: 10;
+}
+
 /*.thead::before {*/
 /*    content: "";*/
 /*    position: absolute;*/
@@ -173,6 +188,21 @@
     .table thead.scrollableHeaderMobile {
         position: sticky;
         top: 0;
+    }
+
+    /* Sticky для каждой строки заголовка на мобильных */
+    .table :global(.scrollableHeaderMobile) .top th {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 15;
+    }
+
+    .table :global(.scrollableHeaderMobile) .headers th {
+        position: sticky;
+        top: 40px; /* Высота строки .top на мобильных */
+        background: white;
+        z-index: 15;
     }
 
     .table tbody {

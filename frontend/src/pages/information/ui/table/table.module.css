@@ -35,6 +35,13 @@
     position: relative;
 }
 
+.rowSticky {
+    position: sticky;
+    top: 100px; /* После двух строк шапки (50px + ~50px) */
+    z-index: 9; /* Ниже шапки (z-index: 10), но выше остальных элементов */
+    background-color: #FFDC2D;
+}
+
 .mainTitle {
     font-weight: bold;
     color: #8D2411;
@@ -287,5 +294,12 @@
 
     .bold {
         font-weight: 600;
+    }
+
+    .rowSticky {
+        position: sticky;
+        top: 53px; /* После двух строк шапки на мобильных (30px + ~30px) */
+        z-index: 9;
+        background-color: #FFDC2D;
     }
 }

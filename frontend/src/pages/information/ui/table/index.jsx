@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useMemo, useState, useRef, useEffect} from "react";
 import classes from './table.module.css';
 import {Logo} from "../../../../shared/ui/logo/logo.jsx";
 import {getFormattedDate} from "./utils.js";
@@ -6,6 +6,9 @@ import {getFormattedDate} from "./utils.js";
 export const Table = ({data}) => {
 
     const [selectedRow, setSelectedRow] = useState(null);
+    const [shouldStick, setShouldStick] = useState(true);
+    const rowRefs = useRef({});
+    const summeRefs = useRef({});
 
 
     const dataProcessed = useMemo(() => {
@@ -49,11 +52,42 @@ export const Table = ({data}) => {
     const handleAccordion = (index) => {
         if (selectedRow === index) {
             setSelectedRow(null)
+            setShouldStick(true);
         } else {
             setSelectedRow(index)
+            setShouldStick(true);
         }
 
     }
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (selectedRow === null) return;
+
+            const rowElement = rowRefs.current[selectedRow];
+            const summeElement = summeRefs.current[selectedRow];
+
+            if (!rowElement || !summeElement) return;
+
+            const rowRect = rowElement.getBoundingClientRect();
+            const summeRect = summeElement.getBoundingClientRect();
+
+            // Вычисляем позицию, где sticky строка должна остановиться
+            // Это позиция Summe минус высота sticky строки и offset шапки
+            const headerOffset = window.innerWidth <= 640 ? 60 : 100;
+            const stopPosition = summeRect.top - rowRect.height - headerOffset;
+
+            // Если строка Summe приближается к sticky строке, отключаем sticky
+            if (stopPosition <= 0) {
+                setShouldStick(false);
+            } else {
+                setShouldStick(true);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [selectedRow]);
 
     const reloadPage = () => {
         window.location.reload();
@@ -92,10 +126,10 @@ export const Table = ({data}) => {
         return (total / 1000).toFixed(3)
     }
 
-    const getSubrowContent = (subrow) => (
+    const getSubrowContent = (subrow, index) => (
         <>
-            {subrow.map(row => (
-                <>
+            {subrow.map((row, rowIndex) => (
+                <React.Fragment key={`subrow-${index}-${rowIndex}`}>
                     <tr>
                         <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                         <td></td>
@@ -112,8 +146,8 @@ export const Table = ({data}) => {
 
                         <td className={classes.hiddenMobile}></td>
                     </tr>
-                    {row?.detailed?.map((detailed) => (
-                        <tr>
+                    {row?.detailed?.map((detailed, detailedIndex) => (
+                        <tr key={`detailed-${index}-${rowIndex}-${detailedIndex}`}>
                             <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                             <td></td>
                             <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
@@ -124,9 +158,9 @@ export const Table = ({data}) => {
 
                         </tr>
                     ))}
-                </>
+                </React.Fragment>
             ))}
-            <tr className={`${classes.bold} ${classes.summary}`}>
+            <tr ref={el => summeRefs.current[index] = el} className={`${classes.bold} ${classes.summary}`}>
                 <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                 <td>Summe</td>
 
@@ -192,7 +226,11 @@ export const Table = ({data}) => {
                 {Object.keys(dataProcessed).map((key, index) => {
                     return (
                         <React.Fragment key={index}>
-                            <tr className={classes.row} onClick={() => handleAccordion(index)}>
+                            <tr
+                                ref={el => rowRefs.current[index] = el}
+                                className={`${classes.row} ${selectedRow === index && shouldStick ? classes.rowSticky : ''}`}
+                                onClick={() => handleAccordion(index)}
+                            >
                                 <td className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                                 <td className={classes.mainTitle}>
                                     {
@@ -217,7 +255,7 @@ export const Table = ({data}) => {
 
                                 </td>
                             </tr>
-                            {selectedRow === index && getSubrowContent(dataProcessed[key])}
+                            {selectedRow === index && getSubrowContent(dataProcessed[key], index)}
                         </React.Fragment>
                     )
                 })}

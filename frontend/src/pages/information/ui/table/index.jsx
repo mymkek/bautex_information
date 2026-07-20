@@ -12,19 +12,7 @@ export const Table = ({data}) => {
 
 
     const dataProcessed = useMemo(() => {
-        const sortedData = data.sort((a, b) => {
-            const aIsGewebe = a.Breite.includes("Gewebe");
-            const bIsGewebe = b.Breite.includes("Gewebe");
-
-            if (aIsGewebe && !bIsGewebe) return 1; // a в конец
-            if (!aIsGewebe && bIsGewebe) return -1; // b в конец
-
-            // Оба Gewebe или оба обычные — сортируем по числу
-            const aNum = parseFloat(a.Breite.replace(/[^\d.,-]/g, "").replace(",", "."));
-            const bNum = parseFloat(b.Breite.replace(/[^\d.,-]/g, "").replace(",", "."));
-
-            return aNum - bNum;
-        });
+        const sortedData = data.sort(compareByBreite);
 
         const groupedData = sortedData.reduce((acc, item) => {
             const key = item.Breite;
@@ -105,7 +93,7 @@ export const Table = ({data}) => {
                 return acc + cur.detailed.reduce((_acc, _cur) => {
                     return _acc + (Number(_cur.LaufmeterRollen))
                 }, 0)
-            }, 0).toLocaleString('de-DE'),
+            }, 0),
             PaletteKG: subrow.reduce((acc, cur) => {
                 return acc + cur.detailed.reduce((_acc, _cur) => {
                     return _acc + (Number(_cur.RollenKG))
@@ -134,12 +122,12 @@ export const Table = ({data}) => {
                         <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                         <td></td>
                         <td className={classes.bold}>
-                            {row?.detailed?.reduce((acc, cur) => {
+                            {formatNumber(row?.detailed?.reduce((acc, cur) => {
                                 return acc + (Number(cur.LaufmeterRollen))
-                            }, 0).toLocaleString('de-DE')}
+                            }, 0))}
                         </td>
                         <td className={classes.bold}>
-                            {(Number(row["PaletteKG "])).toLocaleString('de-DE')}
+                            {formatNumber(row["PaletteKG "])}
                         </td>
                         <td className={classes.bold}>{row.detailed.length || '-'}</td>
                         <td className={classes.bold}>{row["Palette "]}</td>
@@ -150,9 +138,9 @@ export const Table = ({data}) => {
                         <tr key={`detailed-${index}-${rowIndex}-${detailedIndex}`}>
                             <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                             <td></td>
-                            <td>{detailed.LaufmeterRollen.toLocaleString('de-DE')}</td>
-                            <td>{detailed.RollenKG.toLocaleString('de-DE')}</td>
-                            <td>{detailed.NumbRollen.toLocaleString('de-DE')}</td>
+                            <td>{formatNumber(detailed.LaufmeterRollen)}</td>
+                            <td>{formatNumber(detailed.RollenKG)}</td>
+                            <td>{detailed.NumbRollen}</td>
 
                             <td ></td>
 
@@ -164,9 +152,9 @@ export const Table = ({data}) => {
                 <td  className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                 <td>Summe</td>
 
-                <td>{calculateSubrow(subrow).LaufmeterPalette.toLocaleString('de-DE')}</td>
-                <td>{calculateSubrow(subrow).PaletteKG.toLocaleString('de-DE')}</td>
-                <td>{calculateSubrow(subrow).Rollen.toLocaleString('de-DE')}</td>
+                <td>{formatNumber(calculateSubrow(subrow).LaufmeterPalette)}</td>
+                <td>{formatNumber(calculateSubrow(subrow).PaletteKG)}</td>
+                <td>{formatNumber(calculateSubrow(subrow).Rollen)}</td>
                 <td>{subrow.length}</td>
 
                 <td className={classes.hiddenMobile}></td>
@@ -233,17 +221,13 @@ export const Table = ({data}) => {
                             >
                                 <td className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                                 <td className={classes.mainTitle}>
-                                    {
-                                        (key.includes("Gewebe") ? "Gewebe " : "") +
-                                        Number(key.replace(/[^\d.,-]/g, "").replace(",", ".") * 1000)
-                                            .toLocaleString('de-DE')
-                                    }
+                                    {createBreiteTitle(key)}
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? calculateSubrow(dataProcessed[key]).LaufmeterPalette.toLocaleString('de-DE') : null}
+                                    {selectedRow !== index ? formatNumber(calculateSubrow(dataProcessed[key]).LaufmeterPalette) : null}
                                 </td>
                                 <td className={classes.bold}>
-                                    {selectedRow !== index ? calculateSubrow(dataProcessed[key]).PaletteKG.toLocaleString('de-DE') : null}
+                                    {selectedRow !== index ? formatNumber(calculateSubrow(dataProcessed[key]).PaletteKG) : null}
                                 </td>
                                 <td className={classes.bold}>
                                     {selectedRow !== index ? calculateValue(dataProcessed[key], "Rollen") : null}
@@ -264,3 +248,46 @@ export const Table = ({data}) => {
         </>
     );
 }
+
+// Числа в таблице выводятся округлёнными до целых, разделитель разрядов — de-DE.
+const formatNumber = (value) => Math.round(Number(value) || 0).toLocaleString("de-DE");
+
+// --- Справочник типов строк по полю Breite ---
+// order — приоритет группировки: чем больше, тем ниже секция в таблице.
+// labelPrefix — указатель типа, который выводится перед значением ширины.
+// test — предикат распознавания типа по строке Breite.
+const BREITE_CATEGORIES = [
+    { key: "gewebe", labelPrefix: "Gewebe ", order: 1, test: (breite) => breite.includes("Gewebe") },
+    { key: "unverpackt", labelPrefix: "Unverpackt ", order: 2, test: (breite) => breite.includes("Unverpackt") },
+];
+
+// Обычная (verpackt) строка — без указателя, самая верхняя секция.
+const DEFAULT_BREITE_CATEGORY = { key: "normal", labelPrefix: "", order: 0, test: () => true };
+
+// Определяет категорию строки по полю Breite.
+const resolveBreiteCategory = (breite = "") =>
+    BREITE_CATEGORIES.find((category) => category.test(breite)) ?? DEFAULT_BREITE_CATEGORY;
+
+// Достаёт числовое значение ширины из строки Breite (" Gewebe 2.52" -> 2.52).
+const parseBreiteValue = (breite = "") =>
+    parseFloat(breite.replace(/[^\d.,-]/g, "").replace(",", "."));
+
+// --- Фабрика строк таблицы ---
+// Собирает заголовок строки: указатель типа (Gewebe/Unverpackt) + ширина в мм.
+const createBreiteTitle = (breite = "") => {
+    const category = resolveBreiteCategory(breite);
+    const valueMm = formatNumber(parseBreiteValue(breite) * 1000);
+    return category.labelPrefix + valueMm;
+};
+
+// Сортировка: сначала по секции (normal -> Gewebe -> Unverpackt), затем по ширине.
+const compareByBreite = (a, b) => {
+    const aCategory = resolveBreiteCategory(a.Breite);
+    const bCategory = resolveBreiteCategory(b.Breite);
+
+    if (aCategory.order !== bCategory.order) {
+        return aCategory.order - bCategory.order;
+    }
+
+    return parseBreiteValue(a.Breite) - parseBreiteValue(b.Breite);
+};

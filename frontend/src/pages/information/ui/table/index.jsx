@@ -26,6 +26,36 @@ export const Table = ({data}) => {
         return Object.fromEntries(groupedData)
     }, [data]);
 
+    // Ширина числового блока секции Unverpackt — по самому длинному значению в ней.
+    // Общая ширина заголовка становится одинаковой, поэтому начала строк
+    // и разряды чисел выстраиваются по одной вертикали.
+    const unverpacktValueWidth = useMemo(() => {
+        const lengths = Object.keys(dataProcessed)
+            .map(createBreiteTitleParts)
+            .filter(({category}) => category.key === "unverpackt")
+            .map(({valueMm}) => valueMm.length);
+
+        return lengths.length ? `${Math.max(...lengths)}ch` : undefined;
+    }, [dataProcessed]);
+
+    // Обычные секции выводятся одной строкой, Unverpackt — указатель + число.
+    const renderBreiteTitle = (breite) => {
+        const {category, label, valueMm} = createBreiteTitleParts(breite);
+
+        if (category.key !== "unverpackt") {
+            return createBreiteTitle(breite);
+        }
+
+        return (
+            <span className={classes.unverpacktTitle}>
+                <span>{label}</span>
+                <span className={classes.unverpacktValue} style={{minWidth: unverpacktValueWidth}}>
+                    {valueMm}
+                </span>
+            </span>
+        );
+    };
+
     const calculateValue = (data, value) => {
         const sum = data.reduce((sum, item) => {
             // Преобразуем строку в число, если поле пустое, используем 0
@@ -221,7 +251,7 @@ export const Table = ({data}) => {
                             >
                                 <td className={classes.hiddenMobile} style={{minWidth: 96, maxWidth: 96}}></td>
                                 <td className={classes.mainTitle}>
-                                    {createBreiteTitle(key)}
+                                    {renderBreiteTitle(key)}
                                 </td>
                                 <td className={classes.bold}>
                                     {selectedRow !== index ? formatNumber(calculateSubrow(dataProcessed[key]).LaufmeterPalette) : null}
@@ -278,6 +308,17 @@ const createBreiteTitle = (breite = "") => {
     const category = resolveBreiteCategory(breite);
     const valueMm = formatNumber(parseBreiteValue(breite) * 1000);
     return category.labelPrefix + valueMm;
+};
+
+// Разбирает Breite на указатель типа и ширину в мм по отдельности —
+// нужно только для секции Unverpackt, которая рендерится двумя блоками.
+const createBreiteTitleParts = (breite = "") => {
+    const category = resolveBreiteCategory(breite);
+    return {
+        category,
+        label: category.labelPrefix.trim(),
+        valueMm: formatNumber(parseBreiteValue(breite) * 1000),
+    };
 };
 
 // Сортировка: сначала по секции (normal -> Gewebe -> Unverpackt), затем по ширине.

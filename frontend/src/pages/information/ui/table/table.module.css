@@ -48,6 +48,22 @@
 
 }
 
+/* Только секция Unverpackt: указатель и число разнесены по краям блока,
+   ширина которого одинакова у всех строк секции. За счёт этого совпадают
+   и начало строки, и правый край чисел — независимо от text-align ячейки. */
+.unverpacktTitle {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left;
+}
+
+.unverpacktValue {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
 .button {
     background: transparent;
     box-shadow: 4px 5px 6.5px 0px rgba(0, 0, 0, 0.03);

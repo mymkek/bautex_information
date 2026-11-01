@@ -1,17 +1,24 @@
-# frontend/Dockerfile (DEV)
-FROM node:20-alpine
+# frontend/Dockerfile (PROD)
+# Для локальной разработки используй `npm run dev` без Docker.
+
+# --- Сборка ---
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
 # Устанавливаем зависимости
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Копируем весь код
+# Копируем весь код и собираем
 COPY . .
+RUN npm run build
 
-# Открываем стандартный порт Vite
-EXPOSE 5173
+# --- Раздача статики ---
+FROM nginx:alpine
 
-# Запускаем Vite Dev Server (с доступом извне)
-CMD ["npm", "run", "dev", "--", "--host"]
+RUN rm -rf /etc/nginx/conf.d/*
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80

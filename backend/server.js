@@ -11,7 +11,8 @@ const {
     MYSQL_PASSWORD,
     MYSQL_HOST,
     MYSQL_PORT,
-    MYSQL_DATABASE
+    MYSQL_DATABASE,
+    CORS_ORIGIN = 'https://information.bautex.pro' // локально: http://localhost:5173
 } = process.env
 
 
@@ -20,7 +21,7 @@ fastify.register(fastifyMultipart);
 fastify.register(fastifyMysql, {
     connectionString: `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}`,
 })
-fastify.register(fastifyCors, { origin: true, credentials: true });
+fastify.register(fastifyCors, { origin: CORS_ORIGIN.split(','), credentials: true });
 
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);

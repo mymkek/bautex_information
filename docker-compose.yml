@@ -15,14 +15,9 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
+    restart: unless-stopped
     expose:
-      - "5173" # внутренний порт для Docker сети
-    ports:
-      - "5173:5173" # проброс наружу для Vite
-    tty: true
-    stdin_open: true
-    environment:
-      - PORT=5173 # если Vite читает порт из env
+      - "80" # статика доступна только внутри Docker сети, наружу через nginx
 
   mysql:
     image: mysql:8.1
